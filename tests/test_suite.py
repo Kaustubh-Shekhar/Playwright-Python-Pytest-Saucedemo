@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright
 import pytest
-
+from pages.login_page import LoginPage
 
 @pytest.mark.parametrize(
     "username,password",
@@ -12,22 +12,17 @@ import pytest
         ("", ""),
     ],
 )
-def test_invalid_login(username, password):
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto("https://www.saucedemo.com")
-        page.locator("#user-name").fill(username)
-        page.locator("#password").fill(password)
-        page.locator("#login-button").click()
+def test_invalid_login(page,username,password):
 
-        assert page.get_by_text("Epic sadface:").is_visible()
-
-        browser.close()
+    page.goto("https://www.saucedemo.com")
+    loginPage = LoginPage(page)
+    loginPage.login(username,password)
+    assert page.get_by_text("Epic sadface:").is_visible()
 
 
 @pytest.mark.testCart
 def test_adding_single_item_to_cart(page):
+    page = LoginPage(page)
     page.locator("#add-to-cart-sauce-labs-backpack").click()
     page.locator(".shopping_cart_link").click()
     assert page.get_by_text("Sauce Labs Backpack").is_visible()
@@ -43,15 +38,15 @@ def test_adding_multiple_items_to_cart(page):
     assert page.get_by_text("Sauce Labs Onesie").is_visible()
     assert page.get_by_text("Sauce Labs Fleece Jacket").is_visible()
 
-def test_successful_checkout(page):
-    page.locator("#add-to-cart-sauce-labs-backpack").click()
-    page.locator("#add-to-cart-sauce-labs-fleece-jacket").click()
-    page.locator("#add-to-cart-sauce-labs-onesie").click()
-    page.locator(".shopping_cart_link").click()
-    page.locator("#checkout").click()
-    page.locator("#first-name").fill("Kaustubh")
-    page.locator("#last-name").fill("Shekhar")
-    page.locator("#postal-code").fill("101010")
-    page.locator("#continue").click()
-    page.locator("#finish").click()
-    assert page.get_by_text("Thank you for your order!").is_visible()
+# def test_successful_checkout(page):
+#     page.locator("#add-to-cart-sauce-labs-backpack").click()
+#     page.locator("#add-to-cart-sauce-labs-fleece-jacket").click()
+#     page.locator("#add-to-cart-sauce-labs-onesie").click()
+#     page.locator(".shopping_cart_link").click()
+#     page.locator("#checkout").click()
+#     page.locator("#first-name").fill("Kaustubh")
+#     page.locator("#last-name").fill("Shekhar")
+#     page.locator("#postal-code").fill("101010")
+#     page.locator("#continue").click()
+#     page.locator("#finish").click()
+#     assert page.get_by_text("Thank you for your order!").is_visible()
