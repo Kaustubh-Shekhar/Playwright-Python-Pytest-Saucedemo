@@ -1,6 +1,10 @@
 from playwright.sync_api import sync_playwright
 import pytest
+
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
 from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
 
 @pytest.mark.parametrize(
     "username,password",
@@ -13,40 +17,48 @@ from pages.login_page import LoginPage
     ],
 )
 def test_invalid_login(page,username,password):
-
-    page.goto("https://www.saucedemo.com")
     loginPage = LoginPage(page)
+    loginPage.open()
     loginPage.login(username,password)
     assert page.get_by_text("Epic sadface:").is_visible()
 
 
 @pytest.mark.testCart
 def test_adding_single_item_to_cart(page):
-    page = LoginPage(page)
-    page.locator("#add-to-cart-sauce-labs-backpack").click()
-    page.locator(".shopping_cart_link").click()
+    LoginPage(page).open()
+    LoginPage(page).login()
+    invPage = InventoryPage(page)
+    invPage.add_backpack_to_cart()
+    invPage.go_to_cart()
     assert page.get_by_text("Sauce Labs Backpack").is_visible()
 
 @pytest.mark.testCart
 def test_adding_multiple_items_to_cart(page):
-    page.locator("#add-to-cart-sauce-labs-backpack").click()
-    page.locator("#add-to-cart-sauce-labs-fleece-jacket").click()
-    page.locator("#add-to-cart-sauce-labs-onesie").click()
-    page.locator(".shopping_cart_link").click()
+    LoginPage(page).open()
+    LoginPage(page).login()
+    invPage = InventoryPage(page)
+    invPage.add_backpack_to_cart()
+    invPage.add_fleece_jacket_to_cart()
+    invPage.add_onesie_to_cart()
+    invPage.go_to_cart()
 
     assert page.get_by_text("Sauce Labs Backpack").is_visible()
     assert page.get_by_text("Sauce Labs Onesie").is_visible()
     assert page.get_by_text("Sauce Labs Fleece Jacket").is_visible()
 
-# def test_successful_checkout(page):
-#     page.locator("#add-to-cart-sauce-labs-backpack").click()
-#     page.locator("#add-to-cart-sauce-labs-fleece-jacket").click()
-#     page.locator("#add-to-cart-sauce-labs-onesie").click()
-#     page.locator(".shopping_cart_link").click()
-#     page.locator("#checkout").click()
-#     page.locator("#first-name").fill("Kaustubh")
-#     page.locator("#last-name").fill("Shekhar")
-#     page.locator("#postal-code").fill("101010")
-#     page.locator("#continue").click()
-#     page.locator("#finish").click()
-#     assert page.get_by_text("Thank you for your order!").is_visible()
+def test_successful_checkout(page):
+    LoginPage(page).open()
+    LoginPage(page).login()
+
+    invPage = InventoryPage(page)
+    invPage.add_backpack_to_cart()
+    invPage.add_fleece_jacket_to_cart()
+    invPage.add_onesie_to_cart()
+    invPage.go_to_cart()
+
+    CartPage(page).initiate_checkout()
+    checkoutPage = CheckoutPage(page)
+    checkoutPage.fill_form()
+    checkoutPage.submit()
+    checkoutPage.finish_checkout()
+    assert page.get_by_text("Thank you for your order!").is_visible()

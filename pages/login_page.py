@@ -9,13 +9,10 @@ class LoginPage(BasePage):
     def __init__(self, page):
         super().__init__(page)
 
-    def login(self, username = "standard_user", password = "secret_sauce"):
-            self.page.locator(self.USERNAME).fill(username)
-            self.page.locator(self.PASSWORD).fill(password)
-            self.page.locator(self.LOGIN_BTN).click()
+    def open(self):
+        self.page.goto("https://www.saucedemo.com")
 
-    def login_redirect(self, username = "standard_user", password = "secret_sauce"):
-            self.page.goto("https://www.saucedemo.com/")
+    def login(self, username = "standard_user", password = "secret_sauce"):
             self.page.locator(self.USERNAME).fill(username)
             self.page.locator(self.PASSWORD).fill(password)
             self.page.locator(self.LOGIN_BTN).click()
