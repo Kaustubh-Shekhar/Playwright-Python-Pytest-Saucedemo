@@ -1,3 +1,4 @@
+[![Playwright Tests](https://github.com/Kaustubh-Shekhar/Playwright-Python-Pytest-Saucedemo/actions/workflows/playwright_tests.yml/badge.svg)](https://github.com/Kaustubh-Shekhar/Playwright-Python-Pytest-Saucedemo/actions/workflows/playwright_tests.yml)
 # Playwright Python Automation Suite
 
 An end-to-end UI automation testing project built using **Python**, **Playwright (Sync API)**, and **Pytest**. This project automates core user workflows on the SauceDemo application while demonstrating modern QA automation concepts such as fixtures, parameterized testing, custom markers, and test reporting.
