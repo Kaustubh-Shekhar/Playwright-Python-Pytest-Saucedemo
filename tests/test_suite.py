@@ -1,6 +1,5 @@
 from playwright.sync_api import sync_playwright
 import pytest
-
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 from pages.login_page import LoginPage
